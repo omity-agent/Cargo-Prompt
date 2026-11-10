@@ -1,0 +1,19 @@
+{
+  "arguments": [
+    "--workspace",
+    "--all-targets",
+    "--fix",
+    "--allow-no-vcs",
+    "--allow-dirty",
+    "--broken-code",
+    "--message-format",
+    "json",
+    "--quiet"
+  ],
+  "format_arguments": [
+    "--all"
+  ],
+  "environment": {
+    "CLIPPY_DISABLE_DOCS_LINKS": "1"
+  }
+}

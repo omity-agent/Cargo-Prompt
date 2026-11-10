@@ -1,0 +1,5 @@
+[
+  "\\A`[^`\\r\\n]+` implied by `[^`\\r\\n]+`\\z",
+  "\\Ato override `[^`\\r\\n]+` add (?:`#\\[allow\\([^`\\r\\n]+\\)\\]`|`#\\[expect\\([^`\\r\\n]+\\)\\]` or `#\\[allow\\([^`\\r\\n]+\\)\\]`)\\z",
+  "\\Afor a full list of items that can appear in modules, see \\S+\\z"
+]
