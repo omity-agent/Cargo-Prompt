@@ -1,11 +1,12 @@
 use cargo_prompt::format;
-#[test]
-fn groups_diagnostics_without_losing_local_context() {
-    let records = include_str!("diagnostic-records.jsonl");
-    let input = records.repeat(2);
+fn render(input: &str) -> String {
     let mut bytes = Vec::new();
     format(input.as_bytes(), &mut bytes).unwrap();
-    let output = String::from_utf8(bytes).unwrap();
+    String::from_utf8(bytes).unwrap()
+}
+#[test]
+fn groups_diagnostics_without_losing_local_context() {
+    let output = render(&include_str!("diagnostic-records.jsonl").repeat(2));
     assert_eq!(output.matches("<Warning>").count(), 1);
     assert_eq!(output.matches("<example>").count(), 1);
     assert_eq!(output.matches("</example>").count(), 1);
@@ -16,8 +17,8 @@ fn groups_diagnostics_without_losing_local_context() {
     assert!(
         output.contains("<Highlight start=\"1:3\" end=\"1:8\">  let value = \"<T>&\";</Highlight>")
     );
-    assert!(output.contains("<Line number=\"3\">demo!()</Line>"));
-    assert_eq!(output.matches("<Highlight ").count(), 3);
+    assert!(output.contains(include_str!("highlight-blocks.xml")));
+    assert_eq!(output.matches("<Highlight ").count(), 4);
     assert_eq!(output.matches("<Label>secondary</Label>").count(), 1);
     let beta = output.split("<src/beta.rs>").nth(1).unwrap();
     let beta_end = beta.split("</src/beta.rs>").next().unwrap();
@@ -32,7 +33,6 @@ fn groups_diagnostics_without_losing_local_context() {
         assert_eq!(text.matches(detail).count(), 1);
     }
     assert!(!beta_end.contains("drop(&value)"));
-    assert!(output.lines().all(|line| !line.starts_with(' ')));
 }
 #[test]
 fn handles_non_diagnostics_and_rejects_invalid_json() {
@@ -44,9 +44,7 @@ fn handles_non_diagnostics_and_rejects_invalid_json() {
 }
 #[test]
 fn filters_boilerplate_while_preserving_sources_and_descendants() {
-    let mut bytes = Vec::new();
-    format(include_bytes!("boilerplate.jsonl").as_slice(), &mut bytes).unwrap();
-    let output = String::from_utf8(bytes).unwrap();
+    let output = render(include_str!("boilerplate.jsonl"));
     let messages = output
         .lines()
         .filter(|line| line.starts_with("<Detail") || line.starts_with("<Message>"))
@@ -70,9 +68,7 @@ fn filters_boilerplate_while_preserving_sources_and_descendants() {
 }
 #[test]
 fn keeps_errors_and_notes_without_replacement_output() {
-    let mut bytes = Vec::new();
-    format(include_bytes!("protected.jsonl").as_slice(), &mut bytes).unwrap();
-    let output = String::from_utf8(bytes).unwrap();
+    let output = render(include_str!("protected.jsonl"));
     assert!(output.contains("<Message>`a` implied by `b`</Message>"));
     assert!(output.contains("<Message>try</Message>"));
     assert!(output.contains("<Detail code=\"custom\">try</Detail>"));

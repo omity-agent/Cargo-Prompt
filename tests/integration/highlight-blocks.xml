@@ -1,0 +1,21 @@
+<Snippet start="7:5" end="10:6">
+<Highlight start="7:5" end="10:6">
+    match token {
+        _ => "雪",
+
+    }
+</Highlight>
+<Expansion macro="demo!">
+<CallSite path="src/call.rs" start="3:1" end="4:2">
+<Line number="3">demo!(</Line>
+<Line number="4">)</Line>
+</CallSite>
+<Definition path="src/macros.rs" start="2:1" end="4:2">
+<Highlight start="2:1" end="4:2">
+macro_rules! demo {
+    () => {};
+}
+</Highlight>
+</Definition>
+</Expansion>
+</Snippet>

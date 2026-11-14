@@ -18,6 +18,23 @@ fn source(
     text: &[SourceLine],
     highlighted: bool,
 ) -> io::Result<()> {
+    if highlighted
+        && let Some((first, rest)) = text.split_first()
+        && let Some(last) = rest.last()
+    {
+        let end = start
+            .checked_add(rest.len())
+            .ok_or_else(|| io::Error::other("source line number overflow"))?;
+        writeln!(
+            writer,
+            "<Highlight start=\"{start}:{}\" end=\"{end}:{}\">",
+            first.highlight_start, last.highlight_end
+        )?;
+        for line in text {
+            writeln!(writer, "{}", line.text)?;
+        }
+        return writeln!(writer, "</Highlight>");
+    }
     for (offset, line) in text.iter().enumerate() {
         let number = start
             .checked_add(offset)
